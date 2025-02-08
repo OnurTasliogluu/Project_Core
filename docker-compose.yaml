@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      target: development  # Use the development stage for local development
+    ports:
+      - 3000:3000
+      # debugging port
+      - 9229:9229
+    environment:
+      - DATABASE_URL=mongodb://mongodb:27017/tenant-db
+      - CORS_ORIGIN=http://0.0.0.0:3000
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app  # Mount the local directory to enable live reload
+      - /app/node_modules  # Ensure node_modules is not overwritten
+    networks:
+      - app-network
+    command: pnpm start:dev
+    
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge
