@@ -7,12 +7,12 @@ import {
   Put,
   Delete,
   NotFoundException,
-} from '@nestjs/common';
-import { TenantService } from './tenant.service';
-import { Tenant } from './tenant.entity';
-import { CreateTenantDto } from './dto/tenant.dto';
+} from "@nestjs/common";
+import { TenantService } from "./tenant.service";
+import { Tenant } from "./tenant.entity";
+import { CreateTenantDto } from "./dto/tenant.dto";
 
-@Controller('tenants')
+@Controller("tenants")
 export class TenantController {
   constructor(private readonly tenantService: TenantService) {}
 
@@ -21,9 +21,9 @@ export class TenantController {
     return this.tenantService.create(createTenantDto);
   }
 
-  @Get(':subdomain')
+  @Get(":subdomain")
   async findBySubdomain(
-    @Param('subdomain') subdomain: string,
+    @Param("subdomain") subdomain: string,
   ): Promise<Tenant> {
     const tenant = await this.tenantService.findBySubdomain(subdomain);
     if (!tenant) {
@@ -39,16 +39,16 @@ export class TenantController {
     return this.tenantService.findAll();
   }
 
-  @Put(':subdomain')
+  @Put(":subdomain")
   async update(
-    @Param('subdomain') subdomain: string,
+    @Param("subdomain") subdomain: string,
     @Body() updateData: Partial<Tenant>,
   ): Promise<Tenant> {
     return this.tenantService.update(subdomain, updateData);
   }
 
-  @Delete(':subdomain')
-  async delete(@Param('subdomain') subdomain: string): Promise<Tenant> {
+  @Delete(":subdomain")
+  async delete(@Param("subdomain") subdomain: string): Promise<Tenant> {
     return this.tenantService.delete(subdomain);
   }
 }

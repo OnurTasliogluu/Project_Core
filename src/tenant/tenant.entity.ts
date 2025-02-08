@@ -1,4 +1,12 @@
-import { Entity, ObjectIdColumn, ObjectId, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ObjectIdColumn,
+  ObjectId,
+} from "typeorm";
 
 class CustomFields {
   @Column()
@@ -15,14 +23,14 @@ class Config {
   @Column("simple-array")
   modules: string[];
 
-  @Column(type => CustomFields)
+  @Column(() => CustomFields)
   customFields: CustomFields;
 }
 
-@Entity('tenants')
+@Entity("tenants")
 export class Tenant {
   @ObjectIdColumn()
-  _id: ObjectId;
+  id: ObjectId;
 
   @Column()
   status: string;
@@ -30,7 +38,7 @@ export class Tenant {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @Column(type => Config)
+  @Column(() => Config)
   config: Config;
 
   @Column()

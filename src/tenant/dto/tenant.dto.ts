@@ -1,4 +1,14 @@
-import { IsOptional, IsString, IsEmail, IsEnum, IsNotEmpty, IsObject, MinLength, MaxLength, Matches } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  MinLength,
+  MaxLength,
+  Matches,
+} from "class-validator";
 
 // Create DTO
 export class CreateTenantDto {
@@ -13,7 +23,8 @@ export class CreateTenantDto {
   @MinLength(2)
   @MaxLength(100)
   @Matches(/^[a-z0-9-]+$/, {
-    message: 'Subdomain can only contain lowercase letters, numbers, and hyphens'
+    message:
+      "Subdomain can only contain lowercase letters, numbers, and hyphens",
   })
   subdomain: string;
 
@@ -22,8 +33,8 @@ export class CreateTenantDto {
   contactEmail: string;
 
   @IsOptional()
-  @IsEnum(['active', 'suspended', 'pending'])
-  status?: 'active' | 'suspended' | 'pending';
+  @IsEnum(["active", "suspended", "pending"])
+  status?: "active" | "suspended" | "pending";
 
   @IsObject()
   @IsNotEmpty()
@@ -47,7 +58,8 @@ export class UpdateTenantDto {
   @MinLength(2)
   @MaxLength(100)
   @Matches(/^[a-z0-9-]+$/, {
-    message: 'Subdomain can only contain lowercase letters, numbers, and hyphens'
+    message:
+      "Subdomain can only contain lowercase letters, numbers, and hyphens",
   })
   subdomain?: string;
 
@@ -56,8 +68,8 @@ export class UpdateTenantDto {
   contactEmail?: string;
 
   @IsOptional()
-  @IsEnum(['active', 'suspended', 'pending'])
-  status?: 'active' | 'suspended' | 'pending';
+  @IsEnum(["active", "suspended", "pending"])
+  status?: "active" | "suspended" | "pending";
 
   @IsObject()
   @IsOptional()
@@ -74,7 +86,7 @@ export class TenantResponseDto {
   name: string;
   subdomain: string;
   contactEmail: string;
-  status: 'active' | 'suspended' | 'pending';
+  status: "active" | "suspended" | "pending";
   config: {
     theme: string;
     modules: string[];
@@ -95,12 +107,12 @@ export class TenantListResponseDto {
   total: number;
   page: number;
   limit: number;
-  
+
   constructor(
     items: TenantResponseDto[],
     total: number,
     page: number,
-    limit: number
+    limit: number,
   ) {
     this.items = items;
     this.total = total;
@@ -116,8 +128,8 @@ export class TenantQueryDto {
   search?: string;
 
   @IsOptional()
-  @IsEnum(['active', 'suspended', 'pending'])
-  status?: 'active' | 'suspended' | 'pending';
+  @IsEnum(["active", "suspended", "pending"])
+  status?: "active" | "suspended" | "pending";
 
   @IsOptional()
   @MinLength(1)
@@ -131,9 +143,9 @@ export class TenantQueryDto {
 
   @IsOptional()
   @IsString()
-  sortBy?: string = 'createdAt';
+  sortBy?: string = "createdAt";
 
   @IsOptional()
-  @IsEnum(['ASC', 'DESC'])
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
+  @IsEnum(["ASC", "DESC"])
+  sortOrder?: "ASC" | "DESC" = "DESC";
 }
