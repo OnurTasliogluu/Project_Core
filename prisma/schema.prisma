@@ -7,19 +7,20 @@ datasource db {
   url      = env("DATABASE_URL") // Define in .env
 }
 
-model SystemRole {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+enum SystemRole {
+  SUPERADMIN
+  ADMIN
+  USER
 }
 
 model Permission {
   id          String   @id @default(uuid())
   name        String   @unique
   description String
+  isDeleted   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? @db.Timestamp(0)
 }
 
 model Role {
@@ -27,28 +28,32 @@ model Role {
   name          String   @unique
   description   String
   permissionIds String[]
+  isDeleted     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  deletedAt     DateTime? @db.Timestamp(0)
 }
 
 model User {
   id           String     @id @default(uuid())
   username     String     @unique
   password     String
-  email        String?    @unique
-  systemRoleId String
+  email        String     @unique
+  role         SystemRole @default(USER)
   roleIds      String[]
-  isActive     Boolean
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  isActive     Boolean    @default(true)
+  isDeleted    Boolean    @default(false)
+  createdAt    DateTime   @default(now()) @db.Timestamp
+  updatedAt    DateTime   @updatedAt @db.Timestamp
+  deletedAt    DateTime?  @db.Timestamp(0)
 }
 
 model CustomFields {
-  id           String @id @default(uuid())
+  id           String   @id @default(uuid())
   industry     String
   size         String
-  config       Config? @relation(fields: [configId], references: [id])
-  configId     String? @unique
+  config       Config?  @relation(fields: [configId], references: [id])
+  configId     String?  @unique
 }
 
 model Config {
@@ -60,13 +65,14 @@ model Config {
 }
 
 model Tenant {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   status       String
-  isDeleted    Boolean  @default(false)
+  isDeleted    Boolean   @default(false)
   config       Config?
   name         String
   subdomain    String
   contactEmail String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now()) @db.Timestamp
+  updatedAt    DateTime  @updatedAt @db.Timestamp
+  deletedAt    DateTime? @db.Timestamp(0)
 }

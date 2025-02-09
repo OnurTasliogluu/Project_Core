@@ -15,6 +15,8 @@ RUN pnpm install
 # Copy source code
 COPY . .
 
+RUN npm rebuild bcrypt
+
 RUN npx prisma generate
 
 # Build stage
