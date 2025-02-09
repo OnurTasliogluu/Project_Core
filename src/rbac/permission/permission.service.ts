@@ -1,24 +1,31 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException, Logger, InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Permission } from '../entity/permission.entity';
 import { validate } from 'class-validator';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Prisma, Permission } from "@prisma/client";
 
 @Injectable()
 export class PermissionService {
-  constructor(
-    @InjectRepository(Permission)
-    private readonly permissionRepository: Repository<Permission>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Permission[]> {
-    return this.permissionRepository.find();
+  async createPermission(permissionData: Prisma.PermissionCreateInput): Promise<Permission> {
+    return this.prisma.permission.create({
+      data: permissionData,
+    });
   }
 
-  async createPermission(
-    permissionData: Partial<Permission>,
-  ): Promise<Permission> {
-    const permission = this.permissionRepository.create(permissionData);
-    return this.permissionRepository.save(permission);
+  async findAll(): Promise<Permission[]> {
+    return this.prisma.permission.findMany();
+  }
+
+  async findPermissionById(id: string): Promise<Permission | null> {
+    return this.prisma.permission.findUnique({ where: { id } });
+  }
+
+  async updatePermission(id: string, data: Prisma.PermissionUpdateInput): Promise<Permission> {
+    return this.prisma.permission.update({ where: { id }, data });
+  }
+
+  async deletePermission(id: string): Promise<Permission> {
+    return this.prisma.permission.delete({ where: { id } });
   }
 }

@@ -15,6 +15,8 @@ RUN pnpm install
 # Copy source code
 COPY . .
 
+RUN npx prisma generate
+
 # Build stage
 FROM node:20-alpine AS builder
 

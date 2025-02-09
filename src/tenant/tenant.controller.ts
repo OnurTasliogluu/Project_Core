@@ -9,46 +9,28 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { TenantService } from "./tenant.service";
-import { Tenant } from "./tenant.entity";
-import { CreateTenantDto } from "./dto/tenant.dto";
-
+import { Prisma, Tenant } from "@prisma/client";
 @Controller("tenants")
 export class TenantController {
   constructor(private readonly tenantService: TenantService) {}
 
   @Post()
-  async create(@Body() createTenantDto: CreateTenantDto): Promise<Tenant> {
-    return this.tenantService.create(createTenantDto);
-  }
-
-  @Get(":subdomain")
-  async findBySubdomain(
-    @Param("subdomain") subdomain: string,
-  ): Promise<Tenant> {
-    const tenant = await this.tenantService.findBySubdomain(subdomain);
-    if (!tenant) {
-      throw new NotFoundException(
-        `Tenant with subdomain "${subdomain}" not found`,
-      );
-    }
-    return tenant;
+  async createTenant(@Body() data: Prisma.TenantCreateInput): Promise<Tenant> {
+    return this.tenantService.createTenant(data);
   }
 
   @Get()
-  async findAll(): Promise<Tenant[]> {
-    return this.tenantService.findAll();
+  async getAllTenants(): Promise<Tenant[]> {
+    return this.tenantService.findAllTenants();
   }
 
-  @Put(":subdomain")
-  async update(
-    @Param("subdomain") subdomain: string,
-    @Body() updateData: Partial<Tenant>,
-  ): Promise<Tenant> {
-    return this.tenantService.update(subdomain, updateData);
+  @Get(":id")
+  async getTenantById(@Param("id") id: string): Promise<Tenant | null> {
+    return this.tenantService.findTenantById(id);
   }
 
-  @Delete(":subdomain")
-  async delete(@Param("subdomain") subdomain: string): Promise<Tenant> {
-    return this.tenantService.delete(subdomain);
+  @Delete(":id")
+  async deleteTenant(@Param("id") id: string): Promise<Tenant> {
+    return this.tenantService.deleteTenant(id);
   }
 }

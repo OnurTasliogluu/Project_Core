@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Define in .env
+}
+
+model SystemRole {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Role {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  description   String
+  permissionIds String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model User {
+  id           String     @id @default(uuid())
+  username     String     @unique
+  password     String
+  email        String?    @unique
+  systemRoleId String
+  roleIds      String[]
+  isActive     Boolean
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CustomFields {
+  id           String @id @default(uuid())
+  industry     String
+  size         String
+  config       Config? @relation(fields: [configId], references: [id])
+  configId     String? @unique
+}
+
+model Config {
+  id            String       @id @default(uuid())
+  modules       String[]
+  customFields  CustomFields?
+  tenant        Tenant?      @relation(fields: [tenantId], references: [id])
+  tenantId      String?      @unique
+}
+
+model Tenant {
+  id           String   @id @default(uuid())
+  status       String
+  isDeleted    Boolean  @default(false)
+  config       Config?
+  name         String
+  subdomain    String
+  contactEmail String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

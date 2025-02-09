@@ -1,28 +1,44 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
-  Get,
   Param,
   Put,
   Delete,
-  NotFoundException,
 } from "@nestjs/common";
-
 import { UserService } from "./user.service";
-import { User } from "../entity/user.entity";
+import { Prisma } from "@prisma/client";
 
 @Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  @Post()
+  async createUser(@Body() data: Prisma.UserCreateInput) {
+    return this.userService.createUser(data);
   }
 
-  @Post()
-  async createUser(@Body() userData: Partial<User>): Promise<User> {
-    return this.userService.createUser(userData);
+  @Get()
+  async getAllUsers() {
+    return this.userService.findAllUsers();
+  }
+
+  @Get(":id")
+  async getUserById(@Param("id") id: string) {
+    return this.userService.findUserById(id);
+  }
+
+  @Put(":id")
+  async updateUser(
+    @Param("id") id: string,
+    @Body() data: Prisma.UserUpdateInput,
+  ) {
+    return this.userService.updateUser(id, data);
+  }
+
+  @Delete(":id")
+  async deleteUser(@Param("id") id: string) {
+    return this.userService.deleteUser(id);
   }
 }

@@ -1,24 +1,31 @@
 
 
 import { Injectable, NotFoundException, BadRequestException, ConflictException, Logger, InternalServerErrorException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Role } from '../entity/role.entity';
+import { Prisma, Role } from "@prisma/client";
 import { validate } from 'class-validator';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class RoleService {
-  constructor(
-    @InjectRepository(Role)
-    private readonly roleRepository: Repository<Role>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Role[]> {
-    return this.roleRepository.find();
+  async createRole(roleData: Prisma.RoleCreateInput): Promise<Role> {
+    return this.prisma.role.create({ data: roleData });
   }
 
-  async createRole(roleData: Partial<Role>): Promise<Role> {
-    const role = this.roleRepository.create(roleData);
-    return this.roleRepository.save(role);
+  async findAll(): Promise<Role[]> {
+    return this.prisma.role.findMany();
+  }
+
+  async findRoleById(id: string): Promise<Role | null> {
+    return this.prisma.role.findUnique({ where: { id } });
+  }
+
+  async updateRole(id: string, data: Prisma.RoleUpdateInput): Promise<Role> {
+    return this.prisma.role.update({ where: { id }, data });
+  }
+
+  async deleteRole(id: string): Promise<Role> {
+    return this.prisma.role.delete({ where: { id } });
   }
 }
